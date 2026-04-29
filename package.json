@@ -1,0 +1,43 @@
+{
+  "name": "server",
+  "version": "0.0.0",
+  "private": true,
+  "bin": {
+    "server": "bin/wwww"
+  },
+  "main": "index.js",
+  "scripts": {
+    "build": "npx esbuild src/app.ts src/config.ts src/prisma.ts src/bin/www.ts --bundle --format=esm --platform=node --outdir=dist --packages=external",
+    "start": "node dist/bin/www.js",
+    "dev": "tsx watch src/bin/www.ts",
+    "serve": "npm run build && node dist/bin/www.js",
+    "lint": "tslint --project \"tsconfig.json\"",
+    "test": "jest",
+    "test:watch": "npm run test -- --watchAll",
+    "test:coverage": "npm run test -- --coverage"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "morgan": "^1.9.1",
+    "prisma": "^5.22.0"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.10",
+    "@types/express": "^5.0.6",
+    "@types/jest": "^25.2.3",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^25.6.0",
+    "@types/supertest": "^2.0.9",
+    "concurrently": "^5.2.0",
+    "esbuild": "^0.28.0",
+    "jest": "^26.0.1",
+    "nodemon": "^2.0.4",
+    "supertest": "^4.0.2",
+    "ts-jest": "^26.1.0",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.3"
+  }
+}
