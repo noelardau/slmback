@@ -4,14 +4,25 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL")
 }
 
 model collectif {
-  idCollectif    Int     @id @default(autoincrement())
+  idCollectif    Int      @id @default(autoincrement())
   nomCollectif   String
   ville          String
-  email          String  @unique
+  email          String   @unique
   password       String
   photoCollectif String?
+  membres        membre[]
+}
+
+model membre {
+  idMembre       Int      @id @default(autoincrement())
+  nomMembre      String
+  prenomMembre   String
+  photoMembre    String?
+  dateNaissance  DateTime
+  adresse        String
+  idCollectif    Int
+  collectif      collectif @relation(fields: [idCollectif], references: [idCollectif], onDelete: Cascade)
 }

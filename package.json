@@ -1,13 +1,14 @@
 {
   "name": "server",
   "version": "0.0.0",
+  "type": "module",
   "private": true,
   "bin": {
     "server": "bin/wwww"
   },
   "main": "index.js",
   "scripts": {
-    "build": "npx esbuild src/app.ts src/config.ts src/prisma.ts src/bin/www.ts src/routes/collectif.ts src/middleware/auth.ts src/services/collectifService.ts src/models/collectifModel.ts --bundle --format=esm --platform=node --outdir=dist --packages=external",
+    "build": "npx esbuild src/app.ts src/config.ts src/prisma.ts src/bin/www.ts src/routes/collectif.ts src/routes/membre.ts src/middleware/auth.ts src/services/collectifService.ts src/services/membreService.ts src/models/collectifModel.ts src/models/membreModel.ts --bundle --format=esm --platform=node --outdir=dist --packages=external",
     "start": "node dist/bin/www.js",
     "dev": "tsx watch src/bin/www.ts",
     "serve": "npm run build && node dist/bin/www.js",
@@ -17,14 +18,17 @@
     "test:coverage": "npm run test -- --coverage"
   },
   "dependencies": {
-    "@prisma/client": "^5.22.0",
+    "@prisma/adapter-better-sqlite3": "^7.8.0",
+    "@prisma/client": "^7.8.0",
     "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^12.10.0",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
+    "dotenv": "^17.4.2",
     "express": "~4.16.1",
     "jsonwebtoken": "^9.0.3",
     "morgan": "^1.9.1",
-    "prisma": "^5.22.0"
+    "prisma": "^7.8.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",

@@ -3,6 +3,7 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import config from './config.js';
 import collectifRoutes from './routes/collectif.js';
+import membreRoutes from './routes/membre.js';
 
 const app = express();
 
@@ -16,5 +17,6 @@ app.get('/healthcheck', (req, res) => {
 });
 
 app.use('/collectif', collectifRoutes);
+app.use('/collectif', membreRoutes);
 
 export default app;
