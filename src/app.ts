@@ -2,7 +2,7 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import config from './config.js';
-import userRoutes from './routes/users.js';
+import collectifRoutes from './routes/collectif.js';
 
 const app = express();
 
@@ -15,6 +15,6 @@ app.get('/healthcheck', (req, res) => {
   res.status(200).send('OK');
 });
 
-app.use('/users', userRoutes);
+app.use('/collectif', collectifRoutes);
 
 export default app;

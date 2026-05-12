@@ -7,7 +7,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "build": "npx esbuild src/app.ts src/config.ts src/prisma.ts src/bin/www.ts src/routes/users.ts --bundle --format=esm --platform=node --outdir=dist --packages=external",
+    "build": "npx esbuild src/app.ts src/config.ts src/prisma.ts src/bin/www.ts src/routes/collectif.ts src/middleware/auth.ts src/services/collectifService.ts src/models/collectifModel.ts --bundle --format=esm --platform=node --outdir=dist --packages=external",
     "start": "node dist/bin/www.js",
     "dev": "tsx watch src/bin/www.ts",
     "serve": "npm run build && node dist/bin/www.js",
@@ -18,16 +18,20 @@
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
+    "bcryptjs": "^3.0.3",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "express": "~4.16.1",
+    "jsonwebtoken": "^9.0.3",
     "morgan": "^1.9.1",
     "prisma": "^5.22.0"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.6",
     "@types/jest": "^25.2.3",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/morgan": "^1.9.10",
     "@types/node": "^25.6.0",
     "@types/supertest": "^2.0.9",
