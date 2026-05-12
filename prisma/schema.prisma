@@ -7,13 +7,14 @@ datasource db {
 }
 
 model collectif {
-  idCollectif    Int      @id @default(autoincrement())
+  idCollectif    Int       @id @default(autoincrement())
   nomCollectif   String
   ville          String
-  email          String   @unique
+  email          String    @unique
   password       String
   photoCollectif String?
   membres        membre[]
+  tournois       tournoi[]
 }
 
 model membre {
@@ -23,6 +24,18 @@ model membre {
   photoMembre    String?
   dateNaissance  DateTime
   adresse        String
+  idCollectif    Int
+  collectif      collectif @relation(fields: [idCollectif], references: [idCollectif], onDelete: Cascade)
+}
+
+model tournoi {
+  idTournoi      Int       @id @default(autoincrement())
+  LieuTournoi    String
+  dateTournoi    DateTime
+  heureTournoi   String
+  nomTournoi     String
+  nbJury         Int
+  afficheTournoi String?
   idCollectif    Int
   collectif      collectif @relation(fields: [idCollectif], references: [idCollectif], onDelete: Cascade)
 }
