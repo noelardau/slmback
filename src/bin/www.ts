@@ -3,7 +3,7 @@ import config from '../config';
 import http from 'http';
 import { IncomingMessage, ServerResponse } from 'http';
 
-const port = normalizePort(config.port ?? 3000);
+const port = normalizePort(config.port ?? 3001);
 app.set('port', port);
 
 const server = http.createServer(app);

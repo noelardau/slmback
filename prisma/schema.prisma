@@ -18,24 +18,51 @@ model collectif {
 }
 
 model membre {
-  idMembre       Int      @id @default(autoincrement())
+  idMembre       Int                      @id @default(autoincrement())
   nomMembre      String
   prenomMembre   String
   photoMembre    String?
   dateNaissance  DateTime
   adresse        String
   idCollectif    Int
-  collectif      collectif @relation(fields: [idCollectif], references: [idCollectif], onDelete: Cascade)
+  collectif      collectif                @relation(fields: [idCollectif], references: [idCollectif], onDelete: Cascade)
+  participants   tournament_participants[]
 }
 
 model tournoi {
-  idTournoi      Int       @id @default(autoincrement())
-  LieuTournoi    String
-  dateTournoi    DateTime
-  heureTournoi   String
-  nomTournoi     String
-  nbJury         Int
-  afficheTournoi String?
-  idCollectif    Int
-  collectif      collectif @relation(fields: [idCollectif], references: [idCollectif], onDelete: Cascade)
+  idTournoi          Int                    @id @default(autoincrement())
+  LieuTournoi        String
+  dateTournoi        DateTime
+  heureTournoi       String
+  nomTournoi         String
+  nbJury             Int
+  afficheTournoi     String?
+  idCollectif        Int
+  collectif          collectif              @relation(fields: [idCollectif], references: [idCollectif], onDelete: Cascade)
+  participants       tournament_participants[]
+}
+
+model guest {
+  idGuest       Int                    @id @default(autoincrement())
+  nomGuest      String
+  prenomGuest   String
+  emailGuest    String                 @unique
+  telephone     String?
+  participants  tournament_participants[]
+}
+
+model tournament_participants {
+  idParticipant Int        @id @default(autoincrement())
+  idMembre      Int?
+  idTournoi     Int
+  idGuest       Int?
+  membre        membre?    @relation(fields: [idMembre], references: [idMembre], onDelete: Cascade)
+  tournoi       tournoi    @relation(fields: [idTournoi], references: [idTournoi], onDelete: Cascade)
+  guest         guest?     @relation(fields: [idGuest], references: [idGuest], onDelete: Cascade)
+
+  @@unique([idMembre, idTournoi])
+  @@unique([idGuest, idTournoi])
+  @@index([idTournoi])
+  @@index([idMembre])
+  @@index([idGuest])
 }
