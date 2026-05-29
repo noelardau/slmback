@@ -87,4 +87,28 @@ export const collectifService = {
 
     return { message: 'Mot de passe modifié avec succès' };
   },
+
+  async logout(userId: number, token: string) {
+    const decoded = jwt.verify(token, JWT_SECRET) as { userId: number; exp: number };
+    
+    const expiresAt = new Date(decoded.exp * 1000);
+    
+    await prisma.blacklistedToken.create({
+      data: {
+        token,
+        userId,
+        expiresAt,
+      },
+    });
+
+    return { message: 'Déconnexion réussie' };
+  },
+
+  async isTokenBlacklisted(token: string): Promise<boolean> {
+    const blacklisted = await prisma.blacklistedToken.findUnique({
+      where: { token },
+    });
+
+    return !!blacklisted;
+  },
 };

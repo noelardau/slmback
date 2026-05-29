@@ -109,4 +109,20 @@ router.put('/password', authMiddleware, async (req: AuthRequest, res) => {
   }
 });
 
+// Déconnexion (protégé par JWT)
+router.post('/logout', authMiddleware, async (req: AuthRequest, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    
+    if (token) {
+      await collectifService.logout(req.userId!, token);
+    }
+    
+    res.json({ message: 'Déconnexion réussie' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Erreur lors de la déconnexion' });
+  }
+});
+
 export default router;

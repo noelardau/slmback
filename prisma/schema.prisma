@@ -15,6 +15,7 @@ model collectif {
   photoCollectif String?
   membres        membre[]
   tournois       tournoi[]
+  blacklistedTokens blacklistedToken[]
 }
 
 model membre {
@@ -65,4 +66,13 @@ model tournament_participants {
   @@index([idTournoi])
   @@index([idMembre])
   @@index([idGuest])
+}
+
+model blacklistedToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int
+  expiresAt DateTime
+  collectif collectif @relation(fields: [userId], references: [idCollectif], onDelete: Cascade)
+  createdAt DateTime @default(now())
 }
