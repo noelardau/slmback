@@ -1,6 +1,7 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
+import cors from 'cors';
 import config from './config.js';
 import collectifRoutes from './routes/collectif.js';
 import membreRoutes from './routes/membre.js';
@@ -9,6 +10,11 @@ import guestRoutes from './routes/guest.js';
 import participantRoutes from './routes/participant.js';
 
 const app = express();
+
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true,
+}));
 
 app.use(logger(config.loggerLevel));
 app.use(express.json());
