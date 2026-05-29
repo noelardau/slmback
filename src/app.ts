@@ -7,8 +7,6 @@ import membreRoutes from './routes/membre.js';
 import tournoiRoutes from './routes/tournoi.js';
 import guestRoutes from './routes/guest.js';
 import participantRoutes from './routes/participant.js';
-import { openApiSpec } from './docs/openapi.js';
-import swaggerUi from 'swagger-ui-express';
 
 const app = express();
 
@@ -20,12 +18,6 @@ app.use(cookieParser());
 app.get('/healthcheck', (req, res) => {
   res.status(200).send('OK');
 });
-
-// Swagger UI documentation
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiSpec, {
-  customSiteTitle: 'SLAM API Documentation',
-  customCss: '.swagger-ui .topbar { display: none }',
-}));
 
 app.use('/collectif', collectifRoutes);
 app.use('/collectif', membreRoutes);

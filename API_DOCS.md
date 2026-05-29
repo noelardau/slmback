@@ -1,101 +1,252 @@
 # SLAM API Documentation
 
-## Accès à la documentation Swagger
+## Endpoints API
 
-Démarrer le serveur de développement:
+### Authentication
+
+#### POST /collectif/register
+Inscription d'un collectif
+- **Body**:
+  - `nomCollectif` (string, requis) - Nom du collectif
+  - `ville` (string, requis) - Ville du collectif
+  - `email` (string, requis) - Email du collectif
+  - `password` (string, requis) - Mot de passe
+  - `photoCollectif` (string, optionnel) - URL de la photo du collectif
+
+#### POST /collectif/login
+Connexion d'un collectif
+- **Body**:
+  - `email` (string, requis) - Email du collectif
+  - `password` (string, requis) - Mot de passe
+
+#### POST /collectif/logout
+Déconnexion d'un collectif (authentifié)
+- **Headers**:
+  - `Authorization: Bearer <token_jwt>`
+
+### Collectif
+
+#### GET /collectif/profile
+Récupérer le profil du collectif connecté (authentifié)
+- **Headers**:
+  - `Authorization: Bearer <token_jwt>`
+
+#### PUT /collectif/profile
+Mettre à jour le profil du collectif (authentifié)
+- **Headers**:
+  - `Authorization: Bearer <token_jwt>`
+- **Body**:
+  - `nomCollectif` (string, optionnel) - Nom du collectif
+  - `ville` (string, optionnel) - Ville du collectif
+  - `email` (string, optionnel) - Email du collectif
+  - `photoCollectif` (string, optionnel) - URL de la photo du collectif
+
+#### PUT /collectif/password
+Changer le mot de passe du collectif (authentifié)
+- **Headers**:
+  - `Authorization: Bearer <token_jwt>`
+- **Body**:
+  - `currentPassword` (string, requis) - Mot de passe actuel
+  - `newPassword` (string, requis) - Nouveau mot de passe
+
+### Membres
+
+#### POST /collectif/membres
+Créer un nouveau membre (authentifié)
+- **Headers**:
+  - `Authorization: Bearer <token_jwt>`
+- **Body**:
+  - `nomMembre` (string, requis) - Nom du membre
+  - `prenomMembre` (string, requis) - Prénom du membre
+  - `dateNaissance` (string, requis) - Date de naissance (format ISO 8601)
+  - `adresse` (string, requis) - Adresse du membre
+  - `photoMembre` (string, optionnel) - URL de la photo du membre
+
+#### GET /collectif/membres
+Récupérer tous les membres du collectif connecté (authentifié)
+- **Headers**:
+  - `Authorization: Bearer <token_jwt>`
+
+#### GET /collectif/membres/:id
+Récupérer un membre par ID (authentifié)
+- **Headers**:
+  - `Authorization: Bearer <token_jwt>`
+- **Params**:
+  - `id` (number) - ID du membre
+
+#### PUT /collectif/membres/:id
+Mettre à jour un membre (authentifié)
+- **Headers**:
+  - `Authorization: Bearer <token_jwt>`
+- **Params**:
+  - `id` (number) - ID du membre
+- **Body**:
+  - `nomMembre` (string, optionnel) - Nom du membre
+  - `prenomMembre` (string, optionnel) - Prénom du membre
+  - `dateNaissance` (string, optionnel) - Date de naissance (format ISO 8601)
+  - `adresse` (string, optionnel) - Adresse du membre
+  - `photoMembre` (string, optionnel) - URL de la photo du membre
+
+#### DELETE /collectif/membres/:id
+Supprimer un membre (authentifié)
+- **Headers**:
+  - `Authorization: Bearer <token_jwt>`
+- **Params**:
+  - `id` (number) - ID du membre
+
+### Tournois
+
+#### POST /collectif/tournois
+Créer un nouveau tournoi (authentifié)
+- **Headers**:
+  - `Authorization: Bearer <token_jwt>`
+- **Body**:
+  - `LieuTournoi` (string, requis) - Lieu du tournoi
+  - `dateTournoi` (string, requis) - Date du tournoi (format ISO 8601)
+  - `heureTournoi` (string, requis) - Heure du tournoi
+  - `nomTournoi` (string, requis) - Nom du tournoi
+  - `nbJury` (number, requis) - Nombre de jurés
+  - `afficheTournoi` (string, optionnel) - URL de l'affiche du tournoi
+
+#### GET /collectif/tournois
+Récupérer tous les tournois du collectif connecté (authentifié)
+- **Headers**:
+  - `Authorization: Bearer <token_jwt>`
+
+#### GET /collectif/tournois/all
+Récupérer tous les tournois (public)
+
+#### GET /collectif/tournois/:id
+Récupérer un tournoi par ID (public)
+- **Params**:
+  - `id` (number) - ID du tournoi
+
+#### PUT /collectif/tournois/:id
+Mettre à jour un tournoi (authentifié)
+- **Headers**:
+  - `Authorization: Bearer <token_jwt>`
+- **Params**:
+  - `id` (number) - ID du tournoi
+- **Body**:
+  - `LieuTournoi` (string, optionnel) - Lieu du tournoi
+  - `dateTournoi` (string, optionnel) - Date du tournoi (format ISO 8601)
+  - `heureTournoi` (string, optionnel) - Heure du tournoi
+  - `nomTournoi` (string, optionnel) - Nom du tournoi
+  - `nbJury` (number, optionnel) - Nombre de jurés
+  - `afficheTournoi` (string, optionnel) - URL de l'affiche du tournoi
+
+#### DELETE /collectif/tournois/:id
+Supprimer un tournoi (authentifié)
+- **Headers**:
+  - `Authorization: Bearer <token_jwt>`
+- **Params**:
+  - `id` (number) - ID du tournoi
+
+### Guests
+
+#### POST /api/guests
+Créer un nouveau guest (authentifié)
+- **Headers**:
+  - `Authorization: Bearer <token_jwt>`
+- **Body**:
+  - `nomGuest` (string, requis) - Nom du guest
+  - `prenomGuest` (string, requis) - Prénom du guest
+  - `emailGuest` (string, requis) - Email du guest
+  - `telephone` (string, optionnel) - Téléphone du guest
+
+#### GET /api/guests
+Récupérer tous les guests (authentifié)
+- **Headers**:
+  - `Authorization: Bearer <token_jwt>`
+
+#### GET /api/guests/:id
+Récupérer un guest par ID (authentifié)
+- **Headers**:
+  - `Authorization: Bearer <token_jwt>`
+- **Params**:
+  - `id` (number) - ID du guest
+
+#### PUT /api/guests/:id
+Mettre à jour un guest (authentifié)
+- **Headers**:
+  - `Authorization: Bearer <token_jwt>`
+- **Params**:
+  - `id` (number) - ID du guest
+- **Body**:
+  - `nomGuest` (string, optionnel) - Nom du guest
+  - `prenomGuest` (string, optionnel) - Prénom du guest
+  - `emailGuest` (string, optionnel) - Email du guest
+  - `telephone` (string, optionnel) - Téléphone du guest
+
+#### DELETE /api/guests/:id
+Supprimer un guest (authentifié)
+- **Headers**:
+  - `Authorization: Bearer <token_jwt>`
+- **Params**:
+  - `id` (number) - ID du guest
+
+### Participants
+
+#### POST /api/tournois/:idTournoi/participants
+Inscrire un membre à un tournoi (authentifié)
+- **Headers**:
+  - `Authorization: Bearer <token_jwt>`
+- **Params**:
+  - `idTournoi` (number) - ID du tournoi
+
+#### GET /api/tournois/:idTournoi/participants
+Récupérer tous les participants d'un tournoi (public)
+- **Params**:
+  - `idTournoi` (number) - ID du tournoi
+
+#### DELETE /api/tournois/:idTournoi/participants
+Désinscrire un membre d'un tournoi (authentifié)
+- **Headers**:
+  - `Authorization: Bearer <token_jwt>`
+- **Params**:
+  - `idTournoi` (number) - ID du tournoi
+
+#### POST /api/tournois/:idTournoi/guests
+Inscrire un guest à un tournoi (authentifié)
+- **Headers**:
+  - `Authorization: Bearer <token_jwt>`
+- **Params**:
+  - `idTournoi` (number) - ID du tournoi
+- **Body**:
+  - `nomGuest` (string, requis) - Nom du guest
+  - `prenomGuest` (string, requis) - Prénom du guest
+  - `emailGuest` (string, requis) - Email du guest
+  - `telephone` (string, optionnel) - Téléphone du guest
+
+#### DELETE /api/tournois/:idTournoi/guests/:idGuest
+Désinscrire un guest d'un tournoi (authentifié)
+- **Headers**:
+  - `Authorization: Bearer <token_jwt>`
+- **Params**:
+  - `idTournoi` (number) - ID du tournoi
+  - `idGuest` (number) - ID du guest
+
+#### GET /api/membre/tournois
+Récupérer tous les tournois du membre connecté (authentifié)
+- **Headers**:
+  - `Authorization: Bearer <token_jwt>`
+
+#### GET /api/guests/:idGuest/tournois
+Récupérer tous les tournois d'un guest (public)
+- **Params**:
+  - `idGuest` (number) - ID du guest
+
+## Authentification
+
+Tous les endpoints marqués comme "authentifié" nécessitent un token JWT dans l'en-tête Authorization:
+```
+Authorization: Bearer <votre_token_jwt>
+```
+
+## Démarrage du serveur
+
 ```bash
 npm run dev
 ```
 
-Accéder à la documentation interactive:
-```
-http://localhost:3001/api-docs
-```
-
-## Schémas Zod implémentés
-
-### Collectif (`src/schemas/collectif.schema.ts`)
-- `registerSchema` - Inscription d'un collectif
-- `loginSchema` - Connexion d'un collectif
-- `updateProfileSchema` - Mise à jour du profil
-- `updatePasswordSchema` - Changement de mot de passe
-
-### Membre (`src/schemas/membre.schema.ts`)
-- `createMembreSchema` - Création d'un membre
-- `updateMembreSchema` - Mise à jour d'un membre
-
-### Tournoi (`src/schemas/tournoi.schema.ts`)
-- `createTournoiSchema` - Création d'un tournoi
-- `updateTournoiSchema` - Mise à jour d'un tournoi
-
-### Guest (`src/schemas/guest.schema.ts`)
-- `createGuestSchema` - Création d'un guest
-- `updateGuestSchema` - Mise à jour d'un guest
-
-### Participant (`src/schemas/participant.schema.ts`)
-- `createGuestParticipantSchema` - Inscription d'un guest à un tournoi
-
-## Endpoints documentés
-
-### Authentication
-- `POST /collectif/register` - Inscription
-- `POST /collectif/login` - Connexion
-
-### Collectif
-- `GET /collectif/profile` - Profil (authentifié)
-- `PUT /collectif/profile` - Mise à jour profil (authentifié)
-- `PUT /collectif/password` - Changement mot de passe (authentifié)
-
-### Membres
-- `POST /collectif/membres` - Créer membre (authentifié)
-- `GET /collectif/membres` - Liste membres du collectif (authentifié)
-- `GET /collectif/membres/:id` - Récupérer membre (authentifié)
-- `PUT /collectif/membres/:id` - Mettre à jour membre (authentifié)
-- `DELETE /collectif/membres/:id` - Supprimer membre (authentifié)
-
-### Tournois
-- `POST /collectif/tournois` - Créer tournoi (authentifié)
-- `GET /collectif/tournois` - Liste tournois du collectif (authentifié)
-- `GET /collectif/tournois/all` - Liste tous les tournois (public)
-- `GET /collectif/tournois/:id` - Récupérer tournoi (public)
-- `PUT /collectif/tournois/:id` - Mettre à jour tournoi (authentifié)
-- `DELETE /collectif/tournois/:id` - Supprimer tournoi (authentifié)
-
-### Guests
-- `POST /api/guests` - Créer guest (authentifié)
-- `GET /api/guests` - Liste guests (authentifié)
-- `GET /api/guests/:id` - Récupérer guest (authentifié)
-- `PUT /api/guests/:id` - Mettre à jour guest (authentifié)
-- `DELETE /api/guests/:id` - Supprimer guest (authentifié)
-
-### Participants
-- `POST /api/tournois/:idTournoi/participants` - Inscrire membre (authentifié)
-- `GET /api/tournois/:idTournoi/participants` - Liste participants tournoi (public)
-- `DELETE /api/tournois/:idTournoi/participants` - Désinscrire membre (authentifié)
-- `POST /api/tournois/:idTournoi/guests` - Inscrire guest (authentifié)
-- `DELETE /api/tournois/:idTournoi/guests/:idGuest` - Désinscrire guest (authentifié)
-- `GET /api/membre/tournois` - Tournois du membre connecté (authentifié)
-- `GET /api/guests/:idGuest/tournois` - Tournois d'un guest (public)
-
-## Utilisation de la validation Zod
-
-Un middleware de validation a été créé dans `src/middleware/validation.ts`:
-
-```typescript
-import { validateRequestBody } from '../middleware/validation.js';
-import { registerSchema } from '../schemas/collectif.schema.js';
-
-router.post('/register', validateRequestBody(registerSchema), async (req, res) => {
-  // req.body est maintenant validé et typé
-  const { nomCollectif, ville, email, password } = req.body;
-  // ...
-});
-```
-
-## Avantages de cette implémentation
-
-1. **Type-safe**: Validation automatique avec TypeScript
-2. **Maintenance**: Un seul fichier de schéma par entité
-3. **Documentation interactive**: Swagger UI intégré
-4. **Standard OpenAPI**: Compatible avec tous les outils
-5. **Validation réutilisable**: Schémas utilisables partout dans l'application
+Le serveur démarrera sur `http://localhost:3001`
