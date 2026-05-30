@@ -11,8 +11,10 @@ import participantRoutes from './routes/participant.js';
 
 const app = express();
 
+const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:5174';
+
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: corsOrigin,
   credentials: true,
 }));
 
