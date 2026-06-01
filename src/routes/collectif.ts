@@ -1,8 +1,61 @@
 import { Router } from 'express';
 import { collectifService } from '../services/collectifService.js';
 import { authMiddleware, AuthRequest } from '../middleware/auth.js';
+import { upload } from '../middleware/upload.js';
+import { supabase, STORAGE_BUCKET, STORAGE_FOLDER } from '../config/supabase.js';
 
 const router = Router();
+
+// Upload de photo de collectif (protégé par JWT)
+router.post('/photo', authMiddleware, upload.single('photo'), async (req: AuthRequest, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'Aucun fichier fourni' });
+    }
+
+    if (!req.userId) {
+      return res.status(401).json({ error: 'Non authentifié' });
+    }
+
+    const file = req.file;
+    const fileName = `collectif-${req.userId}-${Date.now()}-${Math.random().toString(36).substring(7)}.${file.originalname.split('.').pop()}`;
+    const filePath = `${STORAGE_FOLDER}/${fileName}`;
+
+    // Upload vers Supabase Storage
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from(STORAGE_BUCKET)
+      .upload(filePath, file.buffer, {
+        contentType: file.mimetype,
+        upsert: true,
+      });
+
+    if (uploadError) {
+      console.error('Erreur upload Supabase:', uploadError);
+      return res.status(500).json({ error: 'Erreur lors de l\'upload' });
+    }
+
+    // Obtenir l'URL publique
+    const { data: urlData } = supabase.storage
+      .from(STORAGE_BUCKET)
+      .getPublicUrl(filePath);
+
+    const photoUrl = urlData.publicUrl;
+
+    // Mettre à jour la base de données
+    const updatedCollectif = await collectifService.updateProfile(req.userId, {
+      photoCollectif: photoUrl,
+    });
+
+    res.json({
+      message: 'Photo mise à jour avec succès',
+      url: photoUrl,
+      collectif: updatedCollectif,
+    });
+  } catch (error) {
+    console.error('Erreur upload photo:', error);
+    res.status(500).json({ error: 'Erreur lors de la mise à jour de la photo' });
+  }
+});
 
 // Inscription
 router.post('/register', async (req, res) => {
