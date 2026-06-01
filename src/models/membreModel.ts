@@ -3,6 +3,8 @@ import prisma from '../prisma.js';
 export interface MembreData {
   nomMembre: string;
   prenomMembre: string;
+  pseudoMembre: string;
+  emailMembre: string;
   photoMembre?: string;
   dateNaissance: Date;
   adresse: string;
@@ -12,6 +14,8 @@ export interface MembreData {
 export interface MembreUpdateData {
   nomMembre?: string;
   prenomMembre?: string;
+  pseudoMembre?: string;
+  emailMembre?: string;
   photoMembre?: string;
   dateNaissance?: Date;
   adresse?: string;

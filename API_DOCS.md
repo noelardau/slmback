@@ -58,6 +58,8 @@ Créer un nouveau membre (authentifié)
 - **Body**:
   - `nomMembre` (string, requis) - Nom du membre
   - `prenomMembre` (string, requis) - Prénom du membre
+  - `pseudoMembre` (string, requis) - Pseudo du membre
+  - `emailMembre` (string, requis) - Email du membre
   - `dateNaissance` (string, requis) - Date de naissance (format ISO 8601)
   - `adresse` (string, requis) - Adresse du membre
   - `photoMembre` (string, optionnel) - URL de la photo du membre
@@ -83,6 +85,8 @@ Mettre à jour un membre (authentifié)
 - **Body**:
   - `nomMembre` (string, optionnel) - Nom du membre
   - `prenomMembre` (string, optionnel) - Prénom du membre
+  - `pseudoMembre` (string, optionnel) - Pseudo du membre
+  - `emailMembre` (string, optionnel) - Email du membre
   - `dateNaissance` (string, optionnel) - Date de naissance (format ISO 8601)
   - `adresse` (string, optionnel) - Adresse du membre
   - `photoMembre` (string, optionnel) - URL de la photo du membre

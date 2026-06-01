@@ -24,6 +24,8 @@ model membre {
   idMembre       Int                      @id @default(autoincrement())
   nomMembre      String
   prenomMembre   String
+  pseudoMembre   String                   @unique
+  emailMembre    String                   @unique
   photoMembre    String?
   dateNaissance  DateTime
   adresse        String

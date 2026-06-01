@@ -6,9 +6,9 @@ const router = Router();
 
 // Créer un membre (protégé par JWT - seul le collectif peut ajouter des membres)
 router.post('/membres', authMiddleware, async (req: AuthRequest, res) => {
-  const { nomMembre, prenomMembre, photoMembre, dateNaissance, adresse } = req.body;
+  const { nomMembre, prenomMembre, pseudoMembre, emailMembre, photoMembre, dateNaissance, adresse } = req.body;
 
-  if (!nomMembre || !prenomMembre || !dateNaissance || !adresse) {
+  if (!nomMembre || !prenomMembre || !pseudoMembre || !emailMembre || !dateNaissance || !adresse) {
     return res.status(400).json({ error: 'Tous les champs obligatoires doivent être remplis' });
   }
 
@@ -16,6 +16,8 @@ router.post('/membres', authMiddleware, async (req: AuthRequest, res) => {
     const result = await membreService.create({
       nomMembre,
       prenomMembre,
+      pseudoMembre,
+      emailMembre,
       photoMembre,
       dateNaissance: new Date(dateNaissance),
       adresse,
@@ -77,7 +79,7 @@ router.get('/membres/:id', authMiddleware, async (req: AuthRequest, res) => {
 // Mettre à jour un membre (protégé par JWT)
 router.put('/membres/:id', authMiddleware, async (req: AuthRequest, res) => {
   const { id } = req.params;
-  const { nomMembre, prenomMembre, photoMembre, dateNaissance, adresse } = req.body;
+  const { nomMembre, prenomMembre, pseudoMembre, emailMembre, photoMembre, dateNaissance, adresse } = req.body;
 
   try {
     const membre = await membreService.getById(Number(id));
@@ -89,6 +91,8 @@ router.put('/membres/:id', authMiddleware, async (req: AuthRequest, res) => {
     const updatedMembre = await membreService.update(Number(id), {
       nomMembre,
       prenomMembre,
+      pseudoMembre,
+      emailMembre,
       photoMembre,
       dateNaissance: dateNaissance ? new Date(dateNaissance) : undefined,
       adresse,
