@@ -11,10 +11,7 @@ export const membreService = {
 
     const membre = await membreModel.create(data);
 
-    return {
-      message: 'Membre créé avec succès',
-      idMembre: membre.idMembre,
-    };
+    return membre;
   },
 
   async getById(id: number) {

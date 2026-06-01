@@ -63,6 +63,7 @@ Créer un nouveau membre (authentifié)
   - `dateNaissance` (string, requis) - Date de naissance (format ISO 8601)
   - `adresse` (string, requis) - Adresse du membre
   - `photoMembre` (string, optionnel) - URL de la photo du membre
+- **Response**: Objet Membre créé
 
 #### GET /collectif/membres
 Récupérer tous les membres du collectif connecté (authentifié)
@@ -111,6 +112,7 @@ Créer un nouveau tournoi (authentifié)
   - `nomTournoi` (string, requis) - Nom du tournoi
   - `nbJury` (number, requis) - Nombre de jurés
   - `afficheTournoi` (string, optionnel) - URL de l'affiche du tournoi
+- **Response**: Objet Tournoi créé
 
 #### GET /collectif/tournois
 Récupérer tous les tournois du collectif connecté (authentifié)

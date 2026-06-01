@@ -11,10 +11,7 @@ export const tournoiService = {
 
     const tournoi = await tournoiModel.create(data);
 
-    return {
-      message: 'Tournoi créé avec succès',
-      idTournoi: tournoi.idTournoi,
-    };
+    return tournoi;
   },
 
   async getById(id: number) {
