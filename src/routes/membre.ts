@@ -1,10 +1,67 @@
 import { Router } from 'express';
 import { membreService } from '../services/membreService.js';
 import { authMiddleware, AuthRequest } from '../middleware/auth.js';
+import { upload } from '../middleware/upload.js';
+import { supabase, STORAGE_BUCKET, STORAGE_FOLDER } from '../config/supabase.js';
 
 const router = Router();
 
-// Créer un membre (protégé par JWT - seul le collectif peut ajouter des membres)
+router.post('/membre/:id/photo', authMiddleware, upload.single('photo'), async (req: AuthRequest, res) => {
+  try {
+    const { id } = req.params;
+    const membreId = Number(id);
+
+    if (!req.file) {
+      return res.status(400).json({ error: 'Aucun fichier fourni' });
+    }
+
+    if (!req.userId) {
+      return res.status(401).json({ error: 'Non authentifié' });
+    }
+
+    const membre = await membreService.getById(membreId);
+
+    if (membre.idCollectif !== req.userId) {
+      return res.status(403).json({ error: 'Vous n\'avez pas accès à ce membre' });
+    }
+
+    const file = req.file;
+    const fileName = `membre-${membreId}-${Date.now()}-${Math.random().toString(36).substring(7)}.${file.originalname.split('.').pop()}`;
+    const filePath = `${STORAGE_FOLDER}/${fileName}`;
+
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from(STORAGE_BUCKET)
+      .upload(filePath, file.buffer, {
+        contentType: file.mimetype,
+        upsert: true,
+      });
+
+    if (uploadError) {
+      console.error('Erreur upload Supabase:', uploadError);
+      return res.status(500).json({ error: 'Erreur lors de l\'upload' });
+    }
+
+    const { data: urlData } = supabase.storage
+      .from(STORAGE_BUCKET)
+      .getPublicUrl(filePath);
+
+    const photoUrl = urlData.publicUrl;
+
+    const updatedMembre = await membreService.update(membreId, {
+      photoMembre: photoUrl,
+    });
+
+    res.json({
+      message: 'Photo mise à jour avec succès',
+      url: photoUrl,
+      membre: updatedMembre,
+    });
+  } catch (error) {
+    console.error('Erreur upload photo:', error);
+    res.status(500).json({ error: 'Erreur lors de la mise à jour de la photo' });
+  }
+});
+
 router.post('/membres', authMiddleware, async (req: AuthRequest, res) => {
   const { nomMembre, prenomMembre, pseudoMembre, emailMembre, photoMembre, dateNaissance, adresse } = req.body;
 
