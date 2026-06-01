@@ -1,10 +1,67 @@
 import { Router } from 'express';
 import { tournoiService } from '../services/tournoiService.js';
 import { authMiddleware, AuthRequest } from '../middleware/auth.js';
+import { upload } from '../middleware/upload.js';
+import { supabase, STORAGE_BUCKET, STORAGE_FOLDER } from '../config/supabase.js';
 
 const router = Router();
 
-// Créer un tournoi (protégé par JWT - seul le collectif peut créer des tournois)
+router.post('/tournoi/:id/affiche', authMiddleware, upload.single('affiche'), async (req: AuthRequest, res) => {
+  try {
+    const { id } = req.params;
+    const tournoiId = Number(id);
+
+    if (!req.file) {
+      return res.status(400).json({ error: 'Aucun fichier fourni' });
+    }
+
+    if (!req.userId) {
+      return res.status(401).json({ error: 'Non authentifié' });
+    }
+
+    const tournoi = await tournoiService.getById(tournoiId);
+
+    if (tournoi.idCollectif !== req.userId) {
+      return res.status(403).json({ error: 'Vous n\'avez pas accès à ce tournoi' });
+    }
+
+    const file = req.file;
+    const fileName = `tournoi-${tournoiId}-${Date.now()}-${Math.random().toString(36).substring(7)}.${file.originalname.split('.').pop()}`;
+    const filePath = `${STORAGE_FOLDER}/${fileName}`;
+
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from(STORAGE_BUCKET)
+      .upload(filePath, file.buffer, {
+        contentType: file.mimetype,
+        upsert: true,
+      });
+
+    if (uploadError) {
+      console.error('Erreur upload Supabase:', uploadError);
+      return res.status(500).json({ error: 'Erreur lors de l\'upload' });
+    }
+
+    const { data: urlData } = supabase.storage
+      .from(STORAGE_BUCKET)
+      .getPublicUrl(filePath);
+
+    const afficheUrl = urlData.publicUrl;
+
+    const updatedTournoi = await tournoiService.update(tournoiId, {
+      afficheTournoi: afficheUrl,
+    });
+
+    res.json({
+      message: 'Affiche mise à jour avec succès',
+      url: afficheUrl,
+      tournoi: updatedTournoi,
+    });
+  } catch (error) {
+    console.error('Erreur upload affiche:', error);
+    res.status(500).json({ error: 'Erreur lors de la mise à jour de l\'affiche' });
+  }
+});
+
 router.post('/tournois', authMiddleware, async (req: AuthRequest, res) => {
   const { LieuTournoi, dateTournoi, heureTournoi, nomTournoi, nbJury, afficheTournoi } = req.body;
 

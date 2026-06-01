@@ -8,5 +8,7 @@ router.post('/upload/collectif-photo', upload.single('photo'), uploadController.
 router.delete('/upload/:path', uploadController.deleteCollectifPhoto);
 router.post('/upload/membre-photo', upload.single('photo'), uploadController.uploadMembrePhoto);
 router.delete('/upload/membre/:path', uploadController.deleteMembrePhoto);
+router.post('/upload/tournoi-affiche', upload.single('affiche'), uploadController.uploadTournoiAffiche);
+router.delete('/upload/tournoi/:path', uploadController.deleteTournoiAffiche);
 
 export default router;
