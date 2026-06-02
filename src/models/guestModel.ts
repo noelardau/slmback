@@ -1,17 +1,11 @@
 import prisma from '../prisma.js';
 
 export interface GuestData {
-  nomGuest: string;
-  prenomGuest: string;
-  emailGuest: string;
-  telephone?: string;
+  pseudo: string;
 }
 
 export interface GuestUpdateData {
-  nomGuest?: string;
-  prenomGuest?: string;
-  emailGuest?: string;
-  telephone?: string;
+  pseudo?: string;
 }
 
 export const guestModel = {
@@ -27,9 +21,9 @@ export const guestModel = {
     });
   },
 
-  async findByEmail(email: string) {
-    return await prisma.guest.findFirst({
-      where: { emailGuest: email },
+  async findByPseudo(pseudo: string) {
+    return await prisma.guest.findUnique({
+      where: { pseudo },
     });
   },
 

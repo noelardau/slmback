@@ -49,10 +49,7 @@ model tournoi {
 
 model guest {
   idGuest       Int                    @id @default(autoincrement())
-  nomGuest      String
-  prenomGuest   String
-  emailGuest    String                 @unique
-  telephone     String?
+  pseudo       String                 @unique
   participants  tournament_participants[]
 }
 

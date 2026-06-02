@@ -4,12 +4,17 @@ import { authMiddleware, AuthRequest } from '../middleware/auth.js';
 
 const router = Router();
 
-// Inscrire un membre à un tournoi (protégé par JWT - le membre doit être connecté)
+// Inscrire un membre à un tournoi (protégé par JWT)
 router.post('/tournois/:idTournoi/participants', authMiddleware, async (req: AuthRequest, res) => {
   const { idTournoi } = req.params;
+  const { idMembre } = req.body;
+
+  if (!idMembre) {
+    return res.status(400).json({ error: 'idMembre est requis' });
+  }
 
   try {
-    const result = await participantService.registerMembre(Number(idTournoi), req.userId!);
+    const result = await participantService.registerMembre(Number(idTournoi), Number(idMembre));
     res.status(201).json(result);
   } catch (error) {
     console.error(error);
@@ -30,19 +35,14 @@ router.post('/tournois/:idTournoi/participants', authMiddleware, async (req: Aut
 // Inscrire un guest à un tournoi (protégé par JWT - pour l'admin/collectif)
 router.post('/tournois/:idTournoi/guests', authMiddleware, async (req: AuthRequest, res) => {
   const { idTournoi } = req.params;
-  const { nomGuest, prenomGuest, emailGuest, telephone } = req.body;
+  const { pseudo } = req.body;
 
-  if (!nomGuest || !prenomGuest || !emailGuest) {
-    return res.status(400).json({ error: 'Tous les champs obligatoires doivent être remplis' });
+  if (!pseudo || typeof pseudo !== 'string' || pseudo.trim() === '') {
+    return res.status(400).json({ error: 'Le pseudo est requis' });
   }
 
   try {
-    const result = await participantService.registerGuest(Number(idTournoi), {
-      nomGuest,
-      prenomGuest,
-      emailGuest,
-      telephone,
-    });
+    const result = await participantService.registerGuest(Number(idTournoi), { pseudo: pseudo.trim() });
 
     res.status(201).json(result);
   } catch (error) {

@@ -34,17 +34,23 @@ export const participantService = {
     };
   },
 
-  async registerGuest(idTournoi: number, guestData: { nomGuest: string; prenomGuest: string; emailGuest: string; telephone?: string }) {
+  async registerGuest(idTournoi: number, guestData: { pseudo: string }) {
     const tournoi = await tournoiModel.findById(idTournoi);
 
     if (!tournoi) {
       throw new Error('Tournoi non trouvé');
     }
 
-    let guest = await guestModel.findByEmail(guestData.emailGuest);
+    const pseudo = guestData.pseudo.trim();
+
+    if (!pseudo) {
+      throw new Error('Le pseudo est requis');
+    }
+
+    let guest = await guestModel.findByPseudo(pseudo);
 
     if (!guest) {
-      const createdGuest = await guestModel.create(guestData);
+      const createdGuest = await guestModel.create({ pseudo });
       guest = createdGuest;
     }
 

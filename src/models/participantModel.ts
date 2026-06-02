@@ -16,14 +16,14 @@ export const participantModel = {
             idMembre: true,
             nomMembre: true,
             prenomMembre: true,
+            pseudoMembre: true,
             photoMembre: true,
           },
         },
         guest: {
           select: {
             idGuest: true,
-            nomGuest: true,
-            prenomGuest: true,
+            pseudo: true,
           },
         },
       },
@@ -39,14 +39,14 @@ export const participantModel = {
             idMembre: true,
             nomMembre: true,
             prenomMembre: true,
+            pseudoMembre: true,
             photoMembre: true,
           },
         },
         guest: {
           select: {
             idGuest: true,
-            nomGuest: true,
-            prenomGuest: true,
+            pseudo: true,
           },
         },
       },

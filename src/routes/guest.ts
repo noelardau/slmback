@@ -6,19 +6,14 @@ const router = Router();
 
 // Créer un guest (protégé par JWT - pour l'admin/collectif)
 router.post('/guests', authMiddleware, async (req: AuthRequest, res) => {
-  const { nomGuest, prenomGuest, emailGuest, telephone } = req.body;
+  const { pseudo } = req.body;
 
-  if (!nomGuest || !prenomGuest || !emailGuest) {
-    return res.status(400).json({ error: 'Tous les champs obligatoires doivent être remplis' });
+  if (!pseudo || typeof pseudo !== 'string' || pseudo.trim() === '') {
+    return res.status(400).json({ error: 'Le pseudo est requis' });
   }
 
   try {
-    const result = await guestService.create({
-      nomGuest,
-      prenomGuest,
-      emailGuest,
-      telephone,
-    });
+    const result = await guestService.create({ pseudo: pseudo.trim() });
 
     res.status(201).json(result);
   } catch (error) {
@@ -66,15 +61,10 @@ router.get('/guests/:id', authMiddleware, async (req: AuthRequest, res) => {
 // Mettre à jour un guest (protégé par JWT)
 router.put('/guests/:id', authMiddleware, async (req: AuthRequest, res) => {
   const { id } = req.params;
-  const { nomGuest, prenomGuest, emailGuest, telephone } = req.body;
+  const { pseudo } = req.body;
 
   try {
-    const updatedGuest = await guestService.update(Number(id), {
-      nomGuest,
-      prenomGuest,
-      emailGuest,
-      telephone,
-    });
+    const updatedGuest = await guestService.update(Number(id), { pseudo });
 
     res.json(updatedGuest);
   } catch (error) {
