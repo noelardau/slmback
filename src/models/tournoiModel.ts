@@ -7,7 +7,20 @@ export interface TournoiData {
   nomTournoi: string;
   nbJury: number;
   afficheTournoi?: string;
+  dureePerfo?: string;
+  tirageAuSort?: boolean;
   idCollectif: number;
+}
+
+export interface UpdateTournoiData {
+  LieuTournoi?: string;
+  dateTournoi?: Date;
+  heureTournoi?: string;
+  nomTournoi?: string;
+  nbJury?: number;
+  afficheTournoi?: string;
+  dureePerfo?: string;
+  tirageAuSort?: boolean;
 }
 
 export interface TournoiUpdateData {

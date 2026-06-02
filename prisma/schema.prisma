@@ -8,6 +8,23 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+model performance {
+  idPerfo      Int       @id @default(autoincrement())
+  duree        Int?      
+  noteFinale   Float?    
+  etat         String?   
+  idTournoi    Int
+  idMembre     Int?
+  idGuest      Int?
+  tournoi      tournoi   @relation(fields: [idTournoi], references: [idTournoi], onDelete: Cascade)
+  membre       membre?   @relation(fields: [idMembre], references: [idMembre], onDelete: Cascade)
+  guest        guest?    @relation(fields: [idGuest], references: [idGuest], onDelete: Cascade)
+
+  @@index([idTournoi])
+  @@index([idMembre])
+  @@index([idGuest])
+}
+
 model collectif {
   idCollectif    Int       @id @default(autoincrement())
   nomCollectif   String
@@ -32,6 +49,7 @@ model membre {
   idCollectif    Int
   collectif      collectif                @relation(fields: [idCollectif], references: [idCollectif], onDelete: Cascade)
   participants   tournament_participants[]
+  performances   performance[]
 }
 
 model tournoi {
@@ -42,15 +60,19 @@ model tournoi {
   nomTournoi         String
   nbJury             Int
   afficheTournoi     String?
+  dureePerfo         String?
+  tirageAuSort       Boolean                @default(false)
   idCollectif        Int
   collectif          collectif              @relation(fields: [idCollectif], references: [idCollectif], onDelete: Cascade)
   participants       tournament_participants[]
+  performances       performance[]
 }
 
 model guest {
   idGuest       Int                    @id @default(autoincrement())
   pseudo       String                 @unique
   participants  tournament_participants[]
+  performances  performance[]
 }
 
 model tournament_participants {

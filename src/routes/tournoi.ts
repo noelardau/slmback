@@ -63,7 +63,7 @@ router.post('/tournoi/:id/affiche', authMiddleware, upload.single('affiche'), as
 });
 
 router.post('/tournois', authMiddleware, async (req: AuthRequest, res) => {
-  const { LieuTournoi, dateTournoi, heureTournoi, nomTournoi, nbJury, afficheTournoi } = req.body;
+  const { LieuTournoi, dateTournoi, heureTournoi, nomTournoi, nbJury, afficheTournoi, dureePerfo, tirageAuSort } = req.body;
 
   if (!LieuTournoi || !dateTournoi || !heureTournoi || !nomTournoi || !nbJury) {
     return res.status(400).json({ error: 'Tous les champs obligatoires doivent être remplis' });
@@ -77,6 +77,8 @@ router.post('/tournois', authMiddleware, async (req: AuthRequest, res) => {
       nomTournoi,
       nbJury,
       afficheTournoi,
+      dureePerfo,
+      tirageAuSort: tirageAuSort !== undefined ? tirageAuSort : false,
       idCollectif: req.userId!,
     });
 
@@ -141,8 +143,8 @@ router.get('/tournois/:id', async (req, res) => {
 // Mettre à jour un tournoi (protégé par JWT)
 router.put('/tournois/:id', authMiddleware, async (req: AuthRequest, res) => {
   const { id } = req.params;
-  const { LieuTournoi, dateTournoi, heureTournoi, nomTournoi, nbJury, afficheTournoi } = req.body;
-
+  const { LieuTournoi, dateTournoi, heureTournoi, nomTournoi, nbJury, afficheTournoi, dureePerfo, tirageAuSort } = req.body;
+  
   try {
     const tournoi = await tournoiService.getById(Number(id));
 
@@ -157,6 +159,8 @@ router.put('/tournois/:id', authMiddleware, async (req: AuthRequest, res) => {
       nomTournoi,
       nbJury,
       afficheTournoi,
+      dureePerfo,
+      tirageAuSort,
     });
 
     res.json(updatedTournoi);
