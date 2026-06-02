@@ -10,7 +10,7 @@ datasource db {
 
 model performance {
   idPerfo      Int       @id @default(autoincrement())
-  duree        Int?      
+  duree        String?   
   noteFinale   Float?    
   etat         String?   
   idTournoi    Int

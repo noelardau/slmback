@@ -4,13 +4,13 @@ export interface PerformanceData {
   idTournoi: number;
   idMembre?: number;
   idGuest?: number;
-  duree?: number;
+  duree?: string;
   noteFinale?: number;
   etat?: string;
 }
 
 export interface PerformanceUpdateData {
-  duree?: number;
+  duree?: string;
   noteFinale?: number;
   etat?: string;
 }
