@@ -100,7 +100,7 @@ export const performanceModel = {
           },
         },
       },
-      orderBy: { idPerfo: 'asc' },
+      orderBy: { idPerfo: 'desc' },
     });
   },
 

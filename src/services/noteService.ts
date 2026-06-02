@@ -22,6 +22,40 @@ class NoteService {
     }
   }
 
+  async createBulk(idPerfo: number, notes: { valeur: number; retenu?: boolean }[]) {
+    try {
+      const createdNotes = [];
+      
+      for (const note of notes) {
+        const createdNote = await noteModel.create({
+          idPerfo,
+          valeur: note.valeur,
+          retenu: note.retenu !== undefined ? Boolean(note.retenu) : true,
+        });
+        createdNotes.push(createdNote);
+      }
+      
+      // Calculate and update the final note for the performance once at the end
+      const finalNote = await noteModel.calculateFinalNote(idPerfo);
+      if (finalNote !== null) {
+        await prisma.performance.update({
+          where: { idPerfo },
+          data: { noteFinale: finalNote },
+        });
+      } else {
+        await prisma.performance.update({
+          where: { idPerfo },
+          data: { noteFinale: null },
+        });
+      }
+      
+      return createdNotes;
+    } catch (error) {
+      console.error('Erreur lors de la création des notes en masse:', error);
+      throw new Error('Erreur lors de la création des notes en masse');
+    }
+  }
+
   async getById(id: number) {
     try {
       const note = await noteModel.findById(id);

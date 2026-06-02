@@ -143,6 +143,6 @@ export const noteModel = {
     if (notes.length === 0) return null;
 
     const sum = notes.reduce((acc, note) => acc + note.valeur, 0);
-    return sum / notes.length;
+    return sum;
   },
 };

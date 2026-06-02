@@ -4,6 +4,41 @@ import { authMiddleware, AuthRequest } from '../middleware/auth.js';
 
 const router = Router();
 
+// Créer plusieurs notes en une seule requête (protégé par JWT)
+router.post('/performances/:idPerfo/notes/bulk', authMiddleware, async (req: AuthRequest, res) => {
+  const { idPerfo } = req.params;
+  const { notes } = req.body;
+
+  if (!Array.isArray(notes) || notes.length === 0) {
+    return res.status(400).json({ error: 'Les notes doivent être un tableau non vide' });
+  }
+
+  for (const note of notes) {
+    if (note.valeur === undefined || note.valeur === null) {
+      return res.status(400).json({ error: 'Toutes les notes doivent avoir une valeur' });
+    }
+    if (typeof note.valeur !== 'number' || note.valeur < 0 || note.valeur > 10) {
+      return res.status(400).json({ error: 'Les notes doivent être des nombres entre 0 et 10' });
+    }
+  }
+
+  try {
+    const createdNotes = await noteService.createBulk(Number(idPerfo), notes);
+    res.status(201).json(createdNotes);
+  } catch (error) {
+    console.error(error);
+    if (error instanceof Error) {
+      if (error.message.includes('non trouvée')) {
+        res.status(404).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: 'Erreur lors de la création des notes' });
+      }
+    } else {
+      res.status(500).json({ error: 'Erreur lors de la création des notes' });
+    }
+  }
+});
+
 // Créer une note (protégé par JWT)
 router.post('/performances/:idPerfo/notes', authMiddleware, async (req: AuthRequest, res) => {
   const { idPerfo } = req.params;
