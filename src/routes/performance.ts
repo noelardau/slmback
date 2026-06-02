@@ -7,7 +7,7 @@ const router = Router();
 // Créer une performance (protégé par JWT)
 router.post('/tournois/:idTournoi/performances', authMiddleware, async (req: AuthRequest, res) => {
   const { idTournoi } = req.params;
-  const { idMembre, idGuest, duree, noteFinale, etat } = req.body;
+  const { idMembre, idGuest, duree, noteFinale, etat, idParticipant } = req.body;
 
   if (!idMembre && !idGuest) {
     return res.status(400).json({ error: 'Une performance doit être liée à un membre ou un invité' });
@@ -20,6 +20,7 @@ router.post('/tournois/:idTournoi/performances', authMiddleware, async (req: Aut
   try {
     const result = await performanceService.create({
       idTournoi: Number(idTournoi),
+      idParticipant: Number(idParticipant),
       idMembre: idMembre ? Number(idMembre) : undefined,
       idGuest: idGuest ? Number(idGuest) : undefined,
       duree: duree || '00:00',

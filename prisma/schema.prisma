@@ -16,9 +16,11 @@ model performance {
   idTournoi    Int
   idMembre     Int?
   idGuest      Int?
+  idParticipant Int
   tournoi      tournoi   @relation(fields: [idTournoi], references: [idTournoi], onDelete: Cascade)
   membre       membre?   @relation(fields: [idMembre], references: [idMembre], onDelete: Cascade)
   guest        guest?    @relation(fields: [idGuest], references: [idGuest], onDelete: Cascade)
+  reference   tournament_participants @relation(fields: [idParticipant], references: [idParticipant], onDelete: Cascade)
   notes        note[]
   penalites    penalite[]
 
@@ -85,6 +87,7 @@ model tournament_participants {
   membre        membre?    @relation(fields: [idMembre], references: [idMembre], onDelete: Cascade)
   tournoi       tournoi    @relation(fields: [idTournoi], references: [idTournoi], onDelete: Cascade)
   guest         guest?     @relation(fields: [idGuest], references: [idGuest], onDelete: Cascade)
+  performances  performance[]
 
   @@unique([idMembre, idTournoi])
   @@unique([idGuest, idTournoi])

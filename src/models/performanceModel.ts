@@ -4,6 +4,7 @@ export interface PerformanceData {
   idTournoi: number;
   idMembre?: number;
   idGuest?: number;
+  idParticipant: number;
   duree?: string;
   noteFinale?: number;
   etat?: string;
@@ -43,10 +44,12 @@ export const performanceModel = {
             idGuest: true,
             pseudo: true,
           },
-        },
+        }
+        
       },
     });
   },
+       
 
   async findById(id: number) {
     return await prisma.performance.findUnique({
