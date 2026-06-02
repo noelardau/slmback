@@ -11,6 +11,7 @@ import participantRoutes from './routes/participant.js';
 import performanceRoutes from './routes/performance.js';
 import uploadRoutes from './routes/upload.js';
 import noteRoutes from './routes/note.js';
+import penaliteRoutes from './routes/penalite.js';
 
 const app = express();
 
@@ -37,6 +38,7 @@ app.use('/api', guestRoutes);
 app.use('/api', participantRoutes);
 app.use('/api', performanceRoutes);
 app.use('/api', noteRoutes);
+app.use('/api', penaliteRoutes);
 app.use('/api', uploadRoutes);
 
 export default app;

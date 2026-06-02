@@ -20,6 +20,7 @@ model performance {
   membre       membre?   @relation(fields: [idMembre], references: [idMembre], onDelete: Cascade)
   guest        guest?    @relation(fields: [idGuest], references: [idGuest], onDelete: Cascade)
   notes        note[]
+  penalites    penalite[]
 
   @@index([idTournoi])
   @@index([idMembre])
@@ -99,6 +100,15 @@ model blacklistedToken {
   expiresAt DateTime
   collectif collectif @relation(fields: [userId], references: [idCollectif], onDelete: Cascade)
   createdAt DateTime @default(now())
+}
+
+model penalite {
+  idPenalite Int   @id @default(autoincrement())
+  idPerfo    Int
+  valeur     Float
+  performance performance @relation(fields: [idPerfo], references: [idPerfo], onDelete: Cascade)
+
+  @@index([idPerfo])
 }
 
 model note {

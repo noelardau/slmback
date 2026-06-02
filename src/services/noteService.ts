@@ -6,14 +6,7 @@ class NoteService {
     try {
       const note = await noteModel.create(data);
       
-      // Calculate and update the final note for the performance
-      const finalNote = await noteModel.calculateFinalNote(data.idPerfo);
-      if (finalNote !== null) {
-        await prisma.performance.update({
-          where: { idPerfo: data.idPerfo },
-          data: { noteFinale: finalNote },
-        });
-      }
+      await this.updatePerformanceFinalNote(data.idPerfo);
       
       return note;
     } catch (error) {
@@ -35,19 +28,7 @@ class NoteService {
         createdNotes.push(createdNote);
       }
       
-      // Calculate and update the final note for the performance once at the end
-      const finalNote = await noteModel.calculateFinalNote(idPerfo);
-      if (finalNote !== null) {
-        await prisma.performance.update({
-          where: { idPerfo },
-          data: { noteFinale: finalNote },
-        });
-      } else {
-        await prisma.performance.update({
-          where: { idPerfo },
-          data: { noteFinale: null },
-        });
-      }
+      await this.updatePerformanceFinalNote(idPerfo);
       
       return createdNotes;
     } catch (error) {
@@ -88,19 +69,7 @@ class NoteService {
 
       const note = await noteModel.update(id, data);
       
-      // Recalculate and update the final note for the performance
-      const finalNote = await noteModel.calculateFinalNote(existingNote.idPerfo);
-      if (finalNote !== null) {
-        await prisma.performance.update({
-          where: { idPerfo: existingNote.idPerfo },
-          data: { noteFinale: finalNote },
-        });
-      } else {
-        await prisma.performance.update({
-          where: { idPerfo: existingNote.idPerfo },
-          data: { noteFinale: null },
-        });
-      }
+      await this.updatePerformanceFinalNote(existingNote.idPerfo);
       
       return note;
     } catch (error) {
@@ -118,25 +87,33 @@ class NoteService {
 
       await noteModel.delete(id);
       
-      // Recalculate and update the final note for the performance
-      const finalNote = await noteModel.calculateFinalNote(existingNote.idPerfo);
-      if (finalNote !== null) {
-        await prisma.performance.update({
-          where: { idPerfo: existingNote.idPerfo },
-          data: { noteFinale: finalNote },
-        });
-      } else {
-        await prisma.performance.update({
-          where: { idPerfo: existingNote.idPerfo },
-          data: { noteFinale: null },
-        });
-      }
+      await this.updatePerformanceFinalNote(existingNote.idPerfo);
       
       return { message: 'Note supprimée avec succès' };
     } catch (error) {
       console.error('Erreur lors de la suppression de la note:', error);
       throw error;
     }
+  }
+
+  private async updatePerformanceFinalNote(idPerfo: number) {
+    const totalNotes = await prisma.note.findMany({
+      where: { idPerfo, retenu: true },
+    });
+
+    const totalPenalites = await prisma.penalite.findMany({
+      where: { idPerfo },
+    });
+
+    const sumNotes = totalNotes.reduce((acc, note) => acc + note.valeur, 0);
+    const sumPenalites = totalPenalites.reduce((acc, penalite) => acc + penalite.valeur, 0);
+
+    const finalNote = sumNotes - sumPenalites;
+
+    await prisma.performance.update({
+      where: { idPerfo },
+      data: { noteFinale: finalNote },
+    });
   }
 }
 
