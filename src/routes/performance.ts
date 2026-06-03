@@ -24,7 +24,7 @@ router.post('/tournois/:idTournoi/performances', authMiddleware, async (req: Aut
       idMembre: idMembre ? Number(idMembre) : undefined,
       idGuest: idGuest ? Number(idGuest) : undefined,
       duree: duree || '00:00',
-      noteFinale: noteFinale ? Number(noteFinale) : undefined,
+      noteFinale: noteFinale !== undefined ? Number(noteFinale) : undefined,
       etat: etat || 'prêt',
     });
 
@@ -119,7 +119,7 @@ router.put('/performances/:id', authMiddleware, async (req: AuthRequest, res) =>
   try {
     const updatedPerformance = await performanceService.update(Number(id), {
       duree: duree || undefined,
-      noteFinale: noteFinale ? Number(noteFinale) : undefined,
+      noteFinale: noteFinale !== undefined ? Number(noteFinale) : undefined,
       etat: etat || undefined,
     });
 

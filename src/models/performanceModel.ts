@@ -18,7 +18,7 @@ export interface PerformanceUpdateData {
 
 export const performanceModel = {
   async create(data: PerformanceData) {
-    return await prisma.performance.create({
+    const result = await prisma.performance.create({
       data,
       include: {
         tournoi: {
@@ -48,6 +48,15 @@ export const performanceModel = {
         
       },
     });
+    
+    if (result.noteFinale !== undefined && result.noteFinale !== null) {
+      await prisma.tournament_participants.update({
+        where: { idParticipant: result.idParticipant },
+        data: { totalNote: { increment: result.noteFinale } }
+      });
+    }
+    
+    return result;
   },
        
 
@@ -156,6 +165,24 @@ export const performanceModel = {
   },
 
   async update(id: number, data: PerformanceUpdateData) {
+    if (data.noteFinale !== undefined) {
+      const existing = await prisma.performance.findUnique({
+        where: { idPerfo: id },
+        select: { noteFinale: true, idParticipant: true }
+      });
+      
+      if (existing) {
+        const oldNote = existing.noteFinale !== null && existing.noteFinale !== undefined ? existing.noteFinale : 0;
+        const newNote = data.noteFinale;
+        const diff = newNote - oldNote;
+        
+        await prisma.tournament_participants.update({
+          where: { idParticipant: existing.idParticipant },
+          data: { totalNote: { increment: diff } }
+        });
+      }
+    }
+    
     return await prisma.performance.update({
       where: { idPerfo: id },
       data,

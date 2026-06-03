@@ -88,6 +88,7 @@ model tournament_participants {
   tournoi       tournoi    @relation(fields: [idTournoi], references: [idTournoi], onDelete: Cascade)
   guest         guest?     @relation(fields: [idGuest], references: [idGuest], onDelete: Cascade)
   performances  performance[]
+  totalNote     Float      @default(0)
 
   @@unique([idMembre, idTournoi])
   @@unique([idGuest, idTournoi])

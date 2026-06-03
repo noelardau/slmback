@@ -1,5 +1,6 @@
 import prisma from '../prisma.js';
 import { noteModel, NoteData, NoteUpdateData } from '../models/noteModel.js';
+import { performanceModel } from '../models/performanceModel.js';
 
 class NoteService {
   async create(data: NoteData) {
@@ -110,10 +111,7 @@ class NoteService {
 
     const finalNote = sumNotes - sumPenalites;
 
-    await prisma.performance.update({
-      where: { idPerfo },
-      data: { noteFinale: finalNote },
-    });
+    await performanceModel.update(idPerfo, { noteFinale: finalNote });
   }
 }
 
