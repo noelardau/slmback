@@ -12,6 +12,7 @@ import performanceRoutes from './routes/performance.js';
 import uploadRoutes from './routes/upload.js';
 import noteRoutes from './routes/note.js';
 import penaliteRoutes from './routes/penalite.js';
+import statisticsRoutes from './routes/statistics.js';
 
 const app = express();
 
@@ -40,5 +41,6 @@ app.use('/api', performanceRoutes);
 app.use('/api', noteRoutes);
 app.use('/api', penaliteRoutes);
 app.use('/api', uploadRoutes);
+app.use('/api', statisticsRoutes);
 
 export default app;
