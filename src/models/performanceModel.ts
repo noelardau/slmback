@@ -210,6 +210,22 @@ export const performanceModel = {
   },
 
   async delete(id: number) {
+    const existing = await prisma.performance.findUnique({
+      where: { idPerfo: id },
+      select: { noteFinale: true, idParticipant: true }
+    });
+    
+    if (existing) {
+      const note = existing.noteFinale !== null && existing.noteFinale !== undefined ? existing.noteFinale : 0;
+      
+      if (note > 0) {
+        await prisma.tournament_participants.update({
+          where: { idParticipant: existing.idParticipant },
+          data: { totalNote: { decrement: note } }
+        });
+      }
+    }
+    
     return await prisma.performance.delete({
       where: { idPerfo: id },
     });
