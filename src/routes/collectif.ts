@@ -76,7 +76,7 @@ router.post('/register', async (req, res) => {
 
     res.status(201).json(result);
   } catch (error) {
-    console.error(error);
+    console.error('Erreur /register:', error);
     res.status(500).json({ error: 'Erreur lors de la création du compte' });
   }
 });
@@ -93,7 +93,7 @@ router.post('/login', async (req, res) => {
     const result = await collectifService.login(email, password);
     res.json(result);
   } catch (error) {
-    console.error(error);
+    console.error('Erreur /login:', error);
     if (error instanceof Error && error.message.includes('Email ou mot de passe incorrect')) {
       res.status(401).json({ error: error.message });
     } else {
