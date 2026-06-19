@@ -1,11 +1,16 @@
 import prisma from '../prisma.js';
 
+export type PrefLang = 'en' | 'fr';
+export type PrefTheme = 'dark' | 'light';
+
 export interface CollectifData {
   nomCollectif: string;
   ville: string;
   email: string;
   password: string;
   photoCollectif?: string;
+  prefLang?: PrefLang;
+  prefTheme?: PrefTheme;
 }
 
 export interface CollectifUpdateData {
@@ -13,6 +18,13 @@ export interface CollectifUpdateData {
   ville?: string;
   email?: string;
   photoCollectif?: string;
+  prefLang?: PrefLang;
+  prefTheme?: PrefTheme;
+}
+
+export interface CollectifPreferences {
+  prefLang?: PrefLang;
+  prefTheme?: PrefTheme;
 }
 
 export const collectifModel = {
@@ -37,6 +49,8 @@ export const collectifModel = {
         ville: true,
         email: true,
         photoCollectif: true,
+        prefLang: true,
+        prefTheme: true,
       },
     });
   },
@@ -51,6 +65,8 @@ export const collectifModel = {
         ville: true,
         email: true,
         photoCollectif: true,
+        prefLang: true,
+        prefTheme: true,
       },
     });
   },

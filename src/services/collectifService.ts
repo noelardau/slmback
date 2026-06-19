@@ -1,7 +1,10 @@
-import { collectifModel, CollectifData, CollectifUpdateData } from '../models/collectifModel.js';
+import { collectifModel, CollectifData, CollectifUpdateData, CollectifPreferences, PrefLang, PrefTheme } from '../models/collectifModel.js';
 import prisma from '../prisma.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+
+const ALLOWED_LANGS: PrefLang[] = ['en', 'fr'];
+const ALLOWED_THEMES: PrefTheme[] = ['dark', 'light'];
 
 const JWT_SECRET = process.env.JWT_SECRET || 'default_secret';
 
@@ -14,9 +17,17 @@ export const collectifService = {
       password: hashedPassword,
     });
 
+    const token = jwt.sign(
+      { userId: collectif.idCollectif },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    const profile = await collectifModel.findById(collectif.idCollectif);
+
     return {
-      message: 'Compte créé avec succès',
-      idCollectif: collectif.idCollectif,
+      token,
+      collectif: profile,
     };
   },
 
@@ -39,10 +50,11 @@ export const collectifService = {
       { expiresIn: '7d' }
     );
 
+    const profile = await collectifModel.findById(collectif.idCollectif);
+
     return {
       token,
-      idCollectif: collectif.idCollectif,
-      nomCollectif: collectif.nomCollectif,
+      collectif: profile,
     };
   },
 
@@ -57,13 +69,43 @@ export const collectifService = {
   },
 
   async updateProfile(id: number, data: CollectifUpdateData) {
-    const collectif = await collectifModel.update(id, data);
+    const collectif = await collectifModel.findById(id);
 
     if (!collectif) {
       throw new Error('Collectif non trouvé');
     }
 
-    return collectif;
+    if (data.prefLang !== undefined && !ALLOWED_LANGS.includes(data.prefLang)) {
+      throw new Error('Langue invalide (valeurs attendues: en, fr)');
+    }
+
+    if (data.prefTheme !== undefined && !ALLOWED_THEMES.includes(data.prefTheme)) {
+      throw new Error('Thème invalide (valeurs attendues: dark, light)');
+    }
+
+    const updatedCollectif = await collectifModel.update(id, data);
+
+    return updatedCollectif;
+  },
+
+  async updatePreferences(id: number, data: CollectifPreferences) {
+    const collectif = await collectifModel.findById(id);
+
+    if (!collectif) {
+      throw new Error('Collectif non trouvé');
+    }
+
+    if (data.prefLang !== undefined && !ALLOWED_LANGS.includes(data.prefLang)) {
+      throw new Error('Langue invalide (valeurs attendues: en, fr)');
+    }
+
+    if (data.prefTheme !== undefined && !ALLOWED_THEMES.includes(data.prefTheme)) {
+      throw new Error('Thème invalide (valeurs attendues: dark, light)');
+    }
+
+    const updatedCollectif = await collectifModel.update(id, data);
+
+    return updatedCollectif;
   },
 
   async updatePassword(id: number, currentPassword: string, newPassword: string) {

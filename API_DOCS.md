@@ -40,6 +40,17 @@ Mettre à jour le profil du collectif (authentifié)
   - `ville` (string, optionnel) - Ville du collectif
   - `email` (string, optionnel) - Email du collectif
   - `photoCollectif` (string, optionnel) - URL de la photo du collectif
+  - `prefLang` (string, optionnel) - Langue préférée (`en` ou `fr`)
+  - `prefTheme` (string, optionnel) - Thème préféré (`dark` ou `light`)
+
+#### PUT /collectif/preferences
+Mettre à jour les préférences d'affichage du collectif (authentifié)
+- **Headers**:
+  - `Authorization: Bearer <token_jwt>`
+- **Body**:
+  - `prefLang` (string, optionnel) - Langue préférée (`en` ou `fr`)
+  - `prefTheme` (string, optionnel) - Thème préféré (`dark` ou `light`)
+- **Response**: Objet Collectif mis à jour (inclut `prefLang` et `prefTheme`)
 
 #### PUT /collectif/password
 Changer le mot de passe du collectif (authentifié)

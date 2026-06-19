@@ -119,7 +119,15 @@ router.get('/profile', authMiddleware, async (req: AuthRequest, res) => {
 
 // Mise à jour du profil (protégé par JWT)
 router.put('/profile', authMiddleware, async (req: AuthRequest, res) => {
-  const { nomCollectif, ville, email, photoCollectif } = req.body;
+  const { nomCollectif, ville, email, photoCollectif, prefLang, prefTheme } = req.body;
+
+  if (prefLang !== undefined && !['en', 'fr'].includes(prefLang)) {
+    return res.status(400).json({ error: 'Langue invalide (valeurs attendues: en, fr)' });
+  }
+
+  if (prefTheme !== undefined && !['dark', 'light'].includes(prefTheme)) {
+    return res.status(400).json({ error: 'Thème invalide (valeurs attendues: dark, light)' });
+  }
 
   try {
     const collectif = await collectifService.updateProfile(req.userId!, {
@@ -127,6 +135,8 @@ router.put('/profile', authMiddleware, async (req: AuthRequest, res) => {
       ville,
       email,
       photoCollectif,
+      prefLang,
+      prefTheme,
     });
     res.json(collectif);
   } catch (error) {
@@ -135,6 +145,34 @@ router.put('/profile', authMiddleware, async (req: AuthRequest, res) => {
       res.status(404).json({ error: error.message });
     } else {
       res.status(500).json({ error: 'Erreur lors de la mise à jour du profil' });
+    }
+  }
+});
+
+// Mise à jour des préférences (thème + langue) (protégé par JWT)
+router.put('/preferences', authMiddleware, async (req: AuthRequest, res) => {
+  const { prefLang, prefTheme } = req.body;
+
+  if (prefLang !== undefined && !['en', 'fr'].includes(prefLang)) {
+    return res.status(400).json({ error: 'Langue invalide (valeurs attendues: en, fr)' });
+  }
+
+  if (prefTheme !== undefined && !['dark', 'light'].includes(prefTheme)) {
+    return res.status(400).json({ error: 'Thème invalide (valeurs attendues: dark, light)' });
+  }
+
+  try {
+    const collectif = await collectifService.updatePreferences(req.userId!, {
+      prefLang,
+      prefTheme,
+    });
+    res.json(collectif);
+  } catch (error) {
+    console.error(error);
+    if (error instanceof Error && error.message.includes('non trouvé')) {
+      res.status(404).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: 'Erreur lors de la mise à jour des préférences' });
     }
   }
 });

@@ -36,6 +36,8 @@ model collectif {
   email          String    @unique
   password       String
   photoCollectif String?
+  prefLang       String    @default("en")
+  prefTheme      String    @default("dark")
   membres        membre[]
   tournois       tournoi[]
   blacklistedTokens blacklistedToken[]
