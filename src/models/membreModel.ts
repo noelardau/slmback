@@ -34,6 +34,18 @@ export const membreModel = {
     });
   },
 
+  async findByPseudo(pseudoMembre: string) {
+    return await prisma.membre.findUnique({
+      where: { pseudoMembre },
+    });
+  },
+
+  async findByEmail(emailMembre: string) {
+    return await prisma.membre.findUnique({
+      where: { emailMembre },
+    });
+  },
+
   async findByCollectif(idCollectif: number) {
     return await prisma.membre.findMany({
       where: { idCollectif },

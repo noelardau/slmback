@@ -13,6 +13,7 @@ import uploadRoutes from './routes/upload.js';
 import noteRoutes from './routes/note.js';
 import penaliteRoutes from './routes/penalite.js';
 import statisticsRoutes from './routes/statistics.js';
+import invitationRoutes, { invitationPublicRoutes } from './routes/invitation.js';
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.get('/healthcheck', (req, res) => {
 app.use('/collectif', collectifRoutes);
 app.use('/collectif', membreRoutes);
 app.use('/collectif', tournoiRoutes);
+app.use('/collectif', invitationRoutes);
 app.use('/api', guestRoutes);
 app.use('/api', participantRoutes);
 app.use('/api', performanceRoutes);
@@ -42,5 +44,6 @@ app.use('/api', noteRoutes);
 app.use('/api', penaliteRoutes);
 app.use('/api', uploadRoutes);
 app.use('/api', statisticsRoutes);
+app.use('/api', invitationPublicRoutes);
 
 export default app;

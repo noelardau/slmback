@@ -110,6 +110,79 @@ Supprimer un membre (authentifié)
 - **Params**:
   - `id` (number) - ID du membre
 
+### Invitations
+
+Les invitations permettent à un collectif de générer un lien d'inscription public
+pour inviter des slaméurs à devenir membres de son collectif. Le lien est réutilisable
+(plusieurs inscriptions possibles) avec une expiration configurable et un quota optionnel.
+
+#### POST /collectif/invitations
+Créer une invitation (authentifié)
+- **Headers**:
+  - `Authorization: Bearer <token_jwt>`
+- **Body**:
+  - `dureeJours` (number, optionnel, défaut 7) - Durée de validité en jours
+  - `maxUsages` (number | null, optionnel, défaut null = illimité) - Nombre max d'inscriptions
+- **Response**: Objet Invitation créé
+  - `idInvitation` (number)
+  - `token` (string) - Token à utiliser dans l'URL `/invitation/:token`
+  - `idCollectif` (number)
+  - `statut` (string) - `ACTIF`, `EXPIRE`, ou `REVOQUE`
+  - `maxUsages` (number | null)
+  - `usagesCount` (number)
+  - `expireLe` (string ISO 8601)
+  - `createdAt` (string ISO 8601)
+
+#### GET /collectif/invitations
+Lister les invitations du collectif connecté (authentifié)
+- **Headers**:
+  - `Authorization: Bearer <token_jwt>`
+- **Response**: Tableau d'invitations (triées par `createdAt` décroissant)
+
+#### DELETE /collectif/invitations/:id
+Révoquer une invitation (authentifié). Le statut passe à `REVOQUE` ; le token devient inutilisable.
+- **Headers**:
+  - `Authorization: Bearer <token_jwt>`
+- **Params**:
+  - `id` (number) - ID de l'invitation
+- **Errors**:
+  - `404` - Invitation non trouvée
+  - `403` - Vous n'avez pas accès à cette invitation
+
+#### GET /api/invitations/:token
+Récupérer les informations publiques d'une invitation (publique, rate limit: 10/min/IP)
+- **Params**:
+  - `token` (string) - Token de l'invitation
+- **Response**:
+  - `nomCollectif` (string)
+  - `ville` (string)
+  - `photoCollectif` (string | null)
+  - `expireLe` (string ISO 8601)
+  - `usagesCount` (number)
+  - `maxUsages` (number | null)
+- **Errors**:
+  - `404` - `Invitation invalide` / `Invitation expirée` / `Invitation révoquée`
+
+#### POST /api/invitations/:token/accept
+Accepter une invitation et créer un membre (publique, rate limit: 5/hour/IP)
+- **Content-Type**: `multipart/form-data` (si photo) ou `application/json`
+- **Params**:
+  - `token` (string) - Token de l'invitation
+- **Body** (form-data):
+  - `nomMembre` (string, requis) - Nom
+  - `prenomMembre` (string, requis) - Prénom
+  - `pseudoMembre` (string, requis) - Pseudo (unique)
+  - `emailMembre` (string, requis) - Email (unique)
+  - `dateNaissance` (string, requis) - Date ISO 8601
+  - `adresse` (string, requis) - Adresse
+  - `photo` (file, optionnel) - Photo de profil (max 5 MB, images uniquement)
+- **Response**: Objet Membre créé (201)
+- **Errors**:
+  - `400` - Champs obligatoires manquants
+  - `404` - Invitation invalide / expirée / révoquée
+  - `409` - `Pseudo déjà utilisé` / `Email déjà utilisé`
+  - `429` - Trop de tentatives (rate limit atteint)
+
 ### Tournois
 
 #### POST /collectif/tournois

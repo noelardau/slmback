@@ -41,6 +41,7 @@ model collectif {
   membres        membre[]
   tournois       tournoi[]
   blacklistedTokens blacklistedToken[]
+  invitations    invitation[]
 }
 
 model membre {
@@ -106,6 +107,20 @@ model blacklistedToken {
   expiresAt DateTime
   collectif collectif @relation(fields: [userId], references: [idCollectif], onDelete: Cascade)
   createdAt DateTime @default(now())
+}
+
+model invitation {
+  idInvitation Int       @id @default(autoincrement())
+  token        String    @unique
+  idCollectif  Int
+  collectif    collectif @relation(fields: [idCollectif], references: [idCollectif], onDelete: Cascade)
+  statut       String    @default("ACTIF")
+  maxUsages    Int?
+  usagesCount  Int       @default(0)
+  expireLe     DateTime
+  createdAt    DateTime  @default(now())
+
+  @@index([idCollectif])
 }
 
 model penalite {
