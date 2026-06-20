@@ -1,15 +1,17 @@
 import { membreModel, MembreData, MembreUpdateData } from '../models/membreModel.js';
 import { collectifModel } from '../models/collectifModel.js';
+import { generateUniqueCodeMembre } from '../utils/codeMembre.js';
 
 export const membreService = {
-  async create(data: MembreData) {
+  async create(data: Omit<MembreData, 'codeMembre'>) {
     const collectif = await collectifModel.findById(data.idCollectif);
 
     if (!collectif) {
       throw new Error('Collectif non trouvé');
     }
 
-    const membre = await membreModel.create(data);
+    const codeMembre = await generateUniqueCodeMembre();
+    const membre = await membreModel.create({ ...data, codeMembre });
 
     return membre;
   },

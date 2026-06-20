@@ -5,6 +5,7 @@ export interface MembreData {
   prenomMembre: string;
   pseudoMembre: string;
   emailMembre: string;
+  codeMembre: string;
   photoMembre?: string;
   dateNaissance: Date;
   adresse: string;
@@ -43,6 +44,12 @@ export const membreModel = {
   async findByEmail(emailMembre: string) {
     return await prisma.membre.findUnique({
       where: { emailMembre },
+    });
+  },
+
+  async findByCodeMembre(codeMembre: string) {
+    return await prisma.membre.findUnique({
+      where: { codeMembre },
     });
   },
 

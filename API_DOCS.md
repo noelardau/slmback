@@ -110,6 +110,17 @@ Supprimer un membre (authentifié)
 - **Params**:
   - `id` (number) - ID du membre
 
+#### Note : code membre (codeMembre)
+Chaque membre possède un `codeMembre` unique au format `SLM-XXXXXX` (6 caractères dans l'alphabet `23456789ABCDEFGHJKMNPQRSTUVWXYZ`, sans ambigus visuels). Ce code est :
+- Généré automatiquement à la création du membre (inscription manuelle ou via invitation collectif).
+- Renvoyé dans la réponse de l'API (champ `codeMembre` de l'objet `membre`) pour affichage à l'utilisateur.
+- Affiché sur l'écran de succès de l'invitation collectif (page publique `/invitation/:token`) avec consigne de mémorisation.
+- Visible dans le profil membre côté administrateur (dashboard).
+- Non modifiable (toute tentative de le passer en update est ignorée).
+- Utilisé pour s'inscrire aux tournois via les liens d'invitation publique (cf. section "Inscriptions tournoi publiques").
+
+Aucun email n'est envoyé automatiquement : le code doit être communicated manuellement par l'administrateur au membre (ou mémorisé par le membre à l'inscription).
+
 ### Invitations
 
 Les invitations permettent à un collectif de générer un lien d'inscription public
@@ -182,6 +193,86 @@ Accepter une invitation et créer un membre (publique, rate limit: 5/hour/IP)
   - `404` - Invitation invalide / expirée / révoquée
   - `409` - `Pseudo déjà utilisé` / `Email déjà utilisé`
   - `429` - Trop de tentatives (rate limit atteint)
+
+### Inscriptions tournoi publiques
+
+Permettent à un collectif de générer un lien d'inscription public pour un tournoi.
+Les slameurs peuvent s'inscrire soit avec leur `codeMembre` (membres du collectif organisateur),
+soit en tant que guest (pseudo). Le lien est réutilisable avec TTL et quota optionnels.
+
+#### POST /collectif/tournois/:idTournoi/invitations
+Créer un lien d'inscription tournoi (authentifié)
+- **Headers**:
+  - `Authorization: Bearer <token_jwt>`
+- **Params**:
+  - `idTournoi` (number) - ID du tournoi
+- **Body**:
+  - `dureeJours` (number, optionnel, défaut 7) - Durée de validité
+  - `maxUsages` (number | null, optionnel, défaut null = illimité) - Nombre max d'inscriptions
+- **Response**: Objet TournamentInvitation créé
+- **Errors**:
+  - `403` - Vous n'avez pas accès à ce tournoi
+  - `404` - Tournoi non trouvé
+
+#### GET /collectif/tournois/:idTournoi/invitations
+Lister les liens d'inscription du tournoi (authentifié)
+- **Headers**:
+  - `Authorization: Bearer <token_jwt>`
+
+#### DELETE /collectif/tournois/:idTournoi/invitations/:idInvitation
+Révoquer un lien d'inscription (authentifié)
+- **Headers**:
+  - `Authorization: Bearer <token_jwt>`
+- **Params**:
+  - `idTournoi` (number) - ID du tournoi
+  - `idInvitation` (number) - ID de l'invitation
+- **Errors**:
+  - `403` - Vous n'avez pas accès / cette invitation n'appartient pas à ce tournoi
+  - `404` - Tournoi/invitation non trouvé(e)
+
+#### GET /api/tournament-invitations/:token
+Récupérer les infos publiques d'une invitation tournoi (publique, rate limit: 10/min/IP)
+- **Params**:
+  - `token` (string) - Token de l'invitation
+- **Response**:
+  - `nomTournoi` (string)
+  - `LieuTournoi` (string)
+  - `dateTournoi` (string ISO 8601)
+  - `heureTournoi` (string)
+  - `nomCollectif` (string)
+  - `ville` (string)
+  - `expireLe` (string ISO 8601)
+  - `usagesCount` (number)
+  - `maxUsages` (number | null)
+- **Errors**:
+  - `404` - `Invitation invalide` / `Invitation expirée` / `Invitation révoquée`
+
+#### POST /api/tournament-invitations/:token/accept/membre
+Inscription au tournoi en tant que membre (publique, rate limit: 5/hour/IP)
+- **Params**:
+  - `token` (string) - Token de l'invitation
+- **Body**:
+  - `codeMembre` (string, requis) - Code au format `SLM-XXXXXX` (insensible à la casse)
+- **Response**: Objet `{ message, participant }` (201)
+- **Errors**:
+  - `400` - Code membre requis
+  - `403` - Ce code membre n'appartient pas au collectif organisateur
+  - `404` - Invitation invalide/expirée/révoquée OU Code membre invalide
+  - `409` - Ce membre est déjà inscrit à ce tournoi
+  - `429` - Trop de tentatives
+
+#### POST /api/tournament-invitations/:token/accept/guest
+Inscription au tournoi en tant que guest (publique, rate limit: 5/hour/IP)
+- **Params**:
+  - `token` (string) - Token de l'invitation
+- **Body**:
+  - `pseudo` (string, requis) - Pseudo / nom de scène (créé automatiquement s'il n'existe pas)
+- **Response**: Objet `{ message, participant }` (201)
+- **Errors**:
+  - `400` - Pseudo requis
+  - `404` - Invitation invalide/expirée/révoquée
+  - `409` - Ce guest est déjà inscrit à ce tournoi
+  - `429` - Trop de tentatives
 
 ### Tournois
 

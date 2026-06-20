@@ -50,6 +50,7 @@ model membre {
   prenomMembre   String
   pseudoMembre   String                   @unique
   emailMembre    String                   @unique
+  codeMembre     String                   @unique
   photoMembre    String?
   dateNaissance  DateTime
   adresse        String
@@ -73,6 +74,7 @@ model tournoi {
   collectif          collectif              @relation(fields: [idCollectif], references: [idCollectif], onDelete: Cascade)
   participants       tournament_participants[]
   performances       performance[]
+  tournamentInvitations tournament_invitation[]
 }
 
 model guest {
@@ -121,6 +123,20 @@ model invitation {
   createdAt    DateTime  @default(now())
 
   @@index([idCollectif])
+}
+
+model tournament_invitation {
+  idTournamentInvitation Int       @id @default(autoincrement())
+  token                   String    @unique
+  idTournoi               Int
+  tournoi                 tournoi   @relation(fields: [idTournoi], references: [idTournoi], onDelete: Cascade)
+  statut                  String    @default("ACTIF")
+  maxUsages               Int?
+  usagesCount             Int       @default(0)
+  expireLe                DateTime
+  createdAt               DateTime  @default(now())
+
+  @@index([idTournoi])
 }
 
 model penalite {

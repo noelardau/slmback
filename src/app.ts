@@ -14,6 +14,7 @@ import noteRoutes from './routes/note.js';
 import penaliteRoutes from './routes/penalite.js';
 import statisticsRoutes from './routes/statistics.js';
 import invitationRoutes, { invitationPublicRoutes } from './routes/invitation.js';
+import tournamentInvitationRoutes, { tournamentInvitationPublicRoutes } from './routes/tournamentInvitation.js';
 
 const app = express();
 
@@ -37,6 +38,7 @@ app.use('/collectif', collectifRoutes);
 app.use('/collectif', membreRoutes);
 app.use('/collectif', tournoiRoutes);
 app.use('/collectif', invitationRoutes);
+app.use('/collectif', tournamentInvitationRoutes);
 app.use('/api', guestRoutes);
 app.use('/api', participantRoutes);
 app.use('/api', performanceRoutes);
@@ -45,5 +47,6 @@ app.use('/api', penaliteRoutes);
 app.use('/api', uploadRoutes);
 app.use('/api', statisticsRoutes);
 app.use('/api', invitationPublicRoutes);
+app.use('/api', tournamentInvitationPublicRoutes);
 
 export default app;

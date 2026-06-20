@@ -17,6 +17,10 @@ export const participantService = {
       throw new Error('Membre non trouvé');
     }
 
+    if (membre.idCollectif !== tournoi.idCollectif) {
+      throw new Error('Ce membre n\'appartient pas au collectif organisateur');
+    }
+
     const existingParticipant = await participantModel.findByTournoiAndMembre(idTournoi, idMembre);
 
     if (existingParticipant) {

@@ -5,6 +5,7 @@ import {
 } from '../models/invitationModel.js';
 import { membreModel, MembreData } from '../models/membreModel.js';
 import { collectifModel } from '../models/collectifModel.js';
+import { generateUniqueCodeMembre } from '../utils/codeMembre.js';
 
 export interface InvitationCreateInput {
   dureeJours?: number;
@@ -91,8 +92,11 @@ export const invitationService = {
       throw new Error('Email déjà utilisé');
     }
 
+    const codeMembre = await generateUniqueCodeMembre();
+
     const membreData: MembreData = {
       ...data,
+      codeMembre,
       photoMembre: photoUrl,
       idCollectif: invitation.idCollectif,
     };
