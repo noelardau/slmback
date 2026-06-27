@@ -2,6 +2,7 @@ import { collectifModel, CollectifData, CollectifUpdateData, CollectifPreference
 import prisma from '../prisma.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { emailService } from './emailService.js';
 
 const ALLOWED_LANGS: PrefLang[] = ['en', 'fr'];
 const ALLOWED_THEMES: PrefTheme[] = ['dark', 'light'];
@@ -18,6 +19,17 @@ export const collectifService = {
     });
 
     const profile = await collectifModel.findById(collectif.idCollectif);
+
+    // Notification admin (non bloquante)
+    emailService
+      .sendNewCollectifNotification({
+        nomCollectif: data.nomCollectif,
+        ville: data.ville,
+        email: data.email,
+      })
+      .catch((err) => {
+        console.error('[emailService] Échec de la notification admin:', err);
+      });
 
     return {
       collectif: profile,
