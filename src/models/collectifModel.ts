@@ -27,6 +27,18 @@ export interface CollectifPreferences {
   prefTheme?: PrefTheme;
 }
 
+const PUBLIC_SELECT = {
+  idCollectif: true,
+  nomCollectif: true,
+  ville: true,
+  email: true,
+  photoCollectif: true,
+  prefLang: true,
+  prefTheme: true,
+  role: true,
+  active: true,
+} as const;
+
 export const collectifModel = {
   async create(data: CollectifData) {
     return await prisma.collectif.create({
@@ -43,15 +55,7 @@ export const collectifModel = {
   async findById(id: number) {
     return await prisma.collectif.findUnique({
       where: { idCollectif: id },
-      select: {
-        idCollectif: true,
-        nomCollectif: true,
-        ville: true,
-        email: true,
-        photoCollectif: true,
-        prefLang: true,
-        prefTheme: true,
-      },
+      select: PUBLIC_SELECT,
     });
   },
 
@@ -59,15 +63,7 @@ export const collectifModel = {
     return await prisma.collectif.update({
       where: { idCollectif: id },
       data,
-      select: {
-        idCollectif: true,
-        nomCollectif: true,
-        ville: true,
-        email: true,
-        photoCollectif: true,
-        prefLang: true,
-        prefTheme: true,
-      },
+      select: PUBLIC_SELECT,
     });
   },
 
@@ -75,6 +71,21 @@ export const collectifModel = {
     return await prisma.collectif.update({
       where: { idCollectif: id },
       data: { password: hashedPassword },
+    });
+  },
+
+  async findAll() {
+    return await prisma.collectif.findMany({
+      select: PUBLIC_SELECT,
+      orderBy: { idCollectif: 'asc' },
+    });
+  },
+
+  async setActive(id: number, active: boolean) {
+    return await prisma.collectif.update({
+      where: { idCollectif: id },
+      data: { active },
+      select: PUBLIC_SELECT,
     });
   },
 };

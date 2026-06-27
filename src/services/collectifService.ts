@@ -18,7 +18,7 @@ export const collectifService = {
     });
 
     const token = jwt.sign(
-      { userId: collectif.idCollectif },
+      { userId: collectif.idCollectif, role: collectif.role },
       JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -44,8 +44,12 @@ export const collectifService = {
       throw new Error('Email ou mot de passe incorrect');
     }
 
+    if (!collectif.active && collectif.role !== 'ADMIN') {
+      throw new Error('Compte suspendu');
+    }
+
     const token = jwt.sign(
-      { userId: collectif.idCollectif },
+      { userId: collectif.idCollectif, role: collectif.role },
       JWT_SECRET,
       { expiresIn: '7d' }
     );

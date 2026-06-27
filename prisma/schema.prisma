@@ -8,6 +8,11 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum Role {
+  COLLECTIF
+  ADMIN
+}
+
 model performance {
   idPerfo      Int       @id @default(autoincrement())
   duree        String?   
@@ -38,6 +43,8 @@ model collectif {
   photoCollectif String?
   prefLang       String    @default("en")
   prefTheme      String    @default("dark")
+  role           Role      @default(COLLECTIF)
+  active         Boolean   @default(true)
   membres        membre[]
   tournois       tournoi[]
   blacklistedTokens blacklistedToken[]

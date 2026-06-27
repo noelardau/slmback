@@ -15,6 +15,7 @@ import penaliteRoutes from './routes/penalite.js';
 import statisticsRoutes from './routes/statistics.js';
 import invitationRoutes, { invitationPublicRoutes } from './routes/invitation.js';
 import tournamentInvitationRoutes, { tournamentInvitationPublicRoutes } from './routes/tournamentInvitation.js';
+import adminRoutes from './routes/admin.js';
 
 const app = express();
 
@@ -48,5 +49,6 @@ app.use('/api', uploadRoutes);
 app.use('/api', statisticsRoutes);
 app.use('/api', invitationPublicRoutes);
 app.use('/api', tournamentInvitationPublicRoutes);
+app.use('/api/admin', adminRoutes);
 
 export default app;
