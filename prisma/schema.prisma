@@ -44,7 +44,7 @@ model collectif {
   prefLang       String    @default("en")
   prefTheme      String    @default("dark")
   role           Role      @default(COLLECTIF)
-  active         Boolean   @default(true)
+  active         Boolean   @default(false)
   membres        membre[]
   tournois       tournoi[]
   blacklistedTokens blacklistedToken[]

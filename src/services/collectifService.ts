@@ -17,16 +17,9 @@ export const collectifService = {
       password: hashedPassword,
     });
 
-    const token = jwt.sign(
-      { userId: collectif.idCollectif, role: collectif.role },
-      JWT_SECRET,
-      { expiresIn: '7d' }
-    );
-
     const profile = await collectifModel.findById(collectif.idCollectif);
 
     return {
-      token,
       collectif: profile,
     };
   },
@@ -45,7 +38,7 @@ export const collectifService = {
     }
 
     if (!collectif.active && collectif.role !== 'ADMIN') {
-      throw new Error('Compte suspendu');
+      throw new Error('Votre compte est en attente de validation par l\'administrateur');
     }
 
     const token = jwt.sign(
