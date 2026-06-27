@@ -18,7 +18,7 @@ export const adminService = {
       nbInvites,
       nbPerformances,
     ] = await Promise.all([
-      prisma.collectif.count({ where: { role: 'COLLECTIF' } }),
+      prisma.collectif.count({ where: { role: 'COLLECTIF', active: true } }),
       prisma.tournoi.count(),
       prisma.membre.count(),
       prisma.guest.count(),
@@ -35,7 +35,9 @@ export const adminService = {
   },
 
   async listCollectifs() {
-    const collectifs = await collectifModel.findAll();
+    const collectifs = (await collectifModel.findAll()).filter(
+      (c) => c.role !== 'ADMIN',
+    );
 
     const withCounts = await Promise.all(
       collectifs.map(async (c) => {
