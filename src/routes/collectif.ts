@@ -95,9 +95,9 @@ router.post('/login', async (req, res) => {
   } catch (error) {
     console.error('Erreur /login:', error);
     if (error instanceof Error && error.message.includes('en attente')) {
-      res.status(403).json({ error: error.message });
+      res.status(403).json({ error: error.message, code: 'ACCOUNT_PENDING' });
     } else if (error instanceof Error && error.message.includes('Email ou mot de passe incorrect')) {
-      res.status(401).json({ error: error.message });
+      res.status(401).json({ error: error.message, code: 'INVALID_CREDENTIALS' });
     } else {
       res.status(500).json({ error: 'Erreur lors de la connexion' });
     }
