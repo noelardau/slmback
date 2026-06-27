@@ -64,4 +64,18 @@ export const adminService = {
 
     return await collectifModel.setActive(id, active);
   },
+
+  async deleteCollectif(id: number) {
+    const existing = await collectifModel.findById(id);
+
+    if (!existing) {
+      throw new Error('Collectif non trouvé');
+    }
+
+    if (existing.role === 'ADMIN') {
+      throw new Error('Impossible de supprimer un compte administrateur');
+    }
+
+    return await collectifModel.delete(id);
+  },
 };

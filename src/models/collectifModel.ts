@@ -88,4 +88,11 @@ export const collectifModel = {
       select: PUBLIC_SELECT,
     });
   },
+
+  async delete(id: number) {
+    return await prisma.collectif.delete({
+      where: { idCollectif: id },
+      select: PUBLIC_SELECT,
+    });
+  },
 };

@@ -52,4 +52,23 @@ router.patch('/collectifs/:id/active', async (req: AuthRequest, res) => {
   }
 });
 
+// Supprimer un collectif
+router.delete('/collectifs/:id', async (req: AuthRequest, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await adminService.deleteCollectif(Number(id));
+    res.json(result);
+  } catch (error) {
+    console.error('Erreur DELETE /admin/collectifs/:id:', error);
+    if (error instanceof Error && error.message.includes('non trouvé')) {
+      res.status(404).json({ error: error.message });
+    } else if (error instanceof Error && error.message.includes('administrateur')) {
+      res.status(400).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: 'Erreur lors de la suppression du collectif' });
+    }
+  }
+});
+
 export default router;
